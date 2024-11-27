@@ -127,7 +127,7 @@ func (a *App) OpenInExplorer(text string) {
 	}
 	// remove after last slash
 	fmt.Println("Open folder: ", absolute_path)
-	cmd := exec.Command("explorer", "/select", absolute_path)
+	cmd := exec.Command("explorer", "/select,", absolute_path)
 	cmd.Run()
 	if err != nil {
 		fmt.Println(err)
