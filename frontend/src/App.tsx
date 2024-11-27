@@ -1,18 +1,24 @@
 import { useEffect, useState } from 'react';
-import logo from './assets/images/logo-universal.png';
 import './App.css';
-import { GetFiles, CopyToClipboard, OpenInExplorer } from "../wailsjs/go/main/App";
-import { main } from '../wailsjs/go/models';
+import { StartApp, CopyToClipboard, OpenInExplorer } from "../wailsjs/go/main/App";
+import { models } from '../wailsjs/go/models';
 import Menu from './components/Menu';
+import { ToastContainer, toast } from 'react-toastify';
+
 function App() {
-    const [result, setResult] = useState<main.Result>();
-    const [path, setPath] = useState<string>("");
-    const [files, setFiles] = useState<main.FileList[]>([]);
-    const updateFileNames = (result: main.Result) => setResult(result);
-    function get_files() {
-        GetFiles().then(data => {
+    const [result, setResult] = useState<models.Result>();
+    const [files, setFiles] = useState<models.FileList[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const updateFileNames = (result: models.Result) => setResult(result);
+    function start_app() {
+        setLoading(true);
+        StartApp().then(data => {
             updateFileNames(data);
             setFiles(data.Files);
+        }).catch(err => {
+            console.log(err);
+        }).finally(() => {
+            setLoading(false);
         });
     }
     function select_folder(folder: string) {
@@ -22,10 +28,35 @@ function App() {
         });
     }
 
-    function copy_clipboard(route: string) {
-        console.log("Copying to clipboard");
+    function copy_clipboard(route: string, e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        e.preventDefault();
+        const btn = e.currentTarget;
+        btn.classList.add("cursor-not-allowed");
+        btn.classList.add("opacity-50");
         CopyToClipboard(route).then(data => {
-            console.log(data);
+            toast.success("Copiado al portapapeles", {
+                position: "bottom-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+
+            btn.classList.remove("cursor-not-allowed");
+            btn.classList.remove("opacity-50");
+        }).catch(err => {
+            console.log(err);
+            toast.error("Error al copiar al portapapeles", {
+                position: "bottom-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         })
     }
 
@@ -42,7 +73,7 @@ function App() {
     }
 
     useEffect(() => {
-        get_files();
+        start_app();
     }, []);
 
     return (
@@ -50,7 +81,13 @@ function App() {
             <div className="w-full">
                 <Menu onsearch={search_files} />
             </div>
-            <div className="grid grid-cols-1">
+            {loading && <div className="w-full h-full flex justify-center items-center">
+                <div className="w-1/2 h-1/2">
+                    <h1 className="text-2xl text-center text-pink-900 font-bold">Cargando...</h1>
+                </div>
+            </div>
+            }
+            {!loading && <div className="grid grid-cols-1">
                 <div className="grid grid-cols-3">
                     {files.map((file, index) => (
                         <div key={index} className="p-2 relative group">
@@ -65,8 +102,8 @@ function App() {
                                     Abrir
                                 </button>
 
-                                <button onClick={() => {
-                                    copy_clipboard(file.AbsolutePath);
+                                <button onClick={(e) => {
+                                    copy_clipboard(file.AbsolutePath, e);
                                 }} className="bg-blue-500 hover:bg-blue-700 rounded-full text-white font-bold py-2 px-4 w-full text-sm">
                                     Copiar
                                 </button>
@@ -97,8 +134,9 @@ function App() {
                     ))}
                 </div>
             </div>
+            }
+        </div>
 
-        </div >
     )
 }
 

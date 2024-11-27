@@ -6,10 +6,10 @@ export function CopyToClipboard(arg1) {
   return window['go']['main']['App']['CopyToClipboard'](arg1);
 }
 
-export function GetFiles() {
-  return window['go']['main']['App']['GetFiles']();
-}
-
 export function OpenInExplorer(arg1) {
   return window['go']['main']['App']['OpenInExplorer'](arg1);
+}
+
+export function StartApp() {
+  return window['go']['main']['App']['StartApp']();
 }

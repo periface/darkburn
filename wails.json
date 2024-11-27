@@ -1,13 +1,13 @@
 {
-  "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "darkburn",
-  "outputfilename": "darkburn",
-  "frontend:install": "npm install",
-  "frontend:build": "npm run build",
-  "frontend:dev:watcher": "npm run dev",
-  "frontend:dev:serverUrl": "auto",
-  "author": {
-    "name": "temp_peri@hotmail.com",
-    "email": "temp_peri@hotmail.com"
-  }
+    "$schema": "https://wails.io/schemas/config.v2.json",
+    "name": "Darkburn",
+    "outputfilename": "Darkburn",
+    "frontend:install": "npm install",
+    "frontend:build": "npm run build",
+    "frontend:dev:watcher": "npm run dev",
+    "frontend:dev:serverUrl": "auto",
+    "author": {
+        "name": "temp_peri@hotmail.com",
+        "email": "temp_peri@hotmail.com"
+    }
 }
