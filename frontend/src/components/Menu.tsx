@@ -1,5 +1,6 @@
 export type MenuProps = {
     onsearch: (search: string) => void;
+    onselect: (filetype: string) => void;
 }
 const Menu = (props: MenuProps) => {
 
@@ -11,11 +12,22 @@ const Menu = (props: MenuProps) => {
                         Darkburn
                     </a>
 
-                    <div className='w-3/4 m-auto'>
+                    <div className='w-2/4 m-auto ml-4'>
                         <input type="text" placeholder='Buscar' className="border rounded-full border-gray-500 w-full p-2 text-black" onChange={(e) => {
                             console.log(e.target.value);
                             props.onsearch(e.target.value);
                         }} />
+                    </div>
+
+                    <div className='w-2/4 m-auto'>
+                        <select className="border rounded-full ml-2 border-gray-500 w-full p-1 text-black" onChange={(e) => {
+                            console.log(e.target.value);
+                            props.onselect(e.target.value);
+                        }}>
+                            <option value="todos">Todo</option>
+                            <option value="svg">SVG</option>
+                            <option value="dxf">DXF</option>
+                        </select>
                     </div>
                 </div>
                 <div className="flex lg:hidden">
