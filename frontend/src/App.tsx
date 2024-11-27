@@ -7,10 +7,12 @@ import Menu from './components/Menu';
 function App() {
     const [result, setResult] = useState<main.Result>();
     const [path, setPath] = useState<string>("");
+    const [files, setFiles] = useState<main.FileList[]>([]);
     const updateFileNames = (result: main.Result) => setResult(result);
     function get_files() {
         GetFiles().then(data => {
             updateFileNames(data);
+            setFiles(data.Files);
         });
     }
     function select_folder(folder: string) {
@@ -27,7 +29,17 @@ function App() {
         })
     }
 
-
+    function search_files(search: string) {
+        console.log("Searching files");
+        if (result?.Files?.length) {
+            let filtered_files = result?.Files.filter((file) => {
+                return file.Name.toUpperCase().includes(search.toUpperCase()) ||
+                    file.Extension.toUpperCase().includes(search.toUpperCase())
+                    || file.AbsolutePath.toUpperCase().includes(search.toUpperCase());
+            });
+            setFiles(filtered_files);
+        }
+    }
 
     useEffect(() => {
         get_files();
@@ -35,10 +47,12 @@ function App() {
 
     return (
         <div id="App">
-            <Menu />
+            <div className="w-full">
+                <Menu onsearch={search_files} />
+            </div>
             <div className="grid grid-cols-1">
-                <div className="grid grid-cols-4 p-5">
-                    {result?.Files.map((file, index) => (
+                <div className="grid grid-cols-3">
+                    {files.map((file, index) => (
                         <div key={index} className="p-2 relative group">
 
                             <div className='z-50 opacity-0 group-hover:opacity-100 absolute top-1/2 right-1/2 bg-opacity-50
@@ -59,7 +73,7 @@ function App() {
                             </div>
                             <div className='border-sky-500 shadow-lime-50 grid grid-cols-1 align-middle items-center justify-items-center'>
                                 <div className=''>
-                                    <p><a href="#" className='cursor-pointer' onClick={() => {
+                                    <p className="m-0"><a href="#" className='cursor-pointer' onClick={() => {
                                         console.log(file.AbsolutePath);
                                     }}>{file.Name}</a>
                                         <img src={file.AbsolutePath} alt="Preview"

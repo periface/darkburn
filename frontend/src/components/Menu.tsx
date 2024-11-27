@@ -1,11 +1,22 @@
-const Menu = () => {
+export type MenuProps = {
+    onsearch: (search: string) => void;
+}
+const Menu = (props: MenuProps) => {
+
     return <>
         <header className="bg-white border-b-sky-800 border shadow shadow-gray-600">
             <nav className="mx-auto flex max-w-7xl lg:max-w-full items-center justify-between p-6 lg:px-8" aria-label="Global">
-                <div className="flex lg:flex-1">
+                <div className="flex lg:flex-1 align-middle items-center">
                     <a href="#" className="text-2xl text-gray-950 font-semibold">
                         Darkburn
                     </a>
+
+                    <div className='w-3/4 m-auto'>
+                        <input type="text" placeholder='Buscar' className="border rounded-full border-gray-500 w-full p-2 text-black" onChange={(e) => {
+                            console.log(e.target.value);
+                            props.onsearch(e.target.value);
+                        }} />
+                    </div>
                 </div>
                 <div className="flex lg:hidden">
                     <button type="button" className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
