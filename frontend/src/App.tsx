@@ -3,7 +3,7 @@ import logo from './assets/images/logo-universal.png';
 import './App.css';
 import { GetFiles, CopyToClipboard, OpenInExplorer } from "../wailsjs/go/main/App";
 import { main } from '../wailsjs/go/models';
-
+import Menu from './components/Menu';
 function App() {
     const [result, setResult] = useState<main.Result>();
     const [path, setPath] = useState<string>("");
@@ -35,37 +35,56 @@ function App() {
 
     return (
         <div id="App">
-            <h1 className="text-red-800 text-4xl font-bold">DarkBurn</h1>
+            <Menu />
             <div className="grid grid-cols-1">
-                <div className="grid grid-cols-2">
+                <div className="grid grid-cols-4 p-5">
                     {result?.Files.map((file, index) => (
-                        <div key={index} className="p-2 border-2 border-solid">
-                            <p><a href="#" onClick={() => {
-                                console.log(file.AbsolutePath);
-                            }}>{file.Name}</a>
-                                <img src={file.AbsolutePath} alt="Preview" onError={
-                                    e => {
-                                        e.currentTarget.remove();
-                                    }
-                                } />
-                            </p>
-                            <button onClick={() => {
-                                select_folder(file.AbsolutePath);
-                            }} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Abrir carpeta
-                            </button>
+                        <div key={index} className="p-2 relative group">
 
-                            <button onClick={() => {
-                                copy_clipboard(file.AbsolutePath);
-                            }} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Copiar a clipboard
-                            </button>
+                            <div className='z-50 opacity-0 group-hover:opacity-100 absolute top-1/2 right-1/2 bg-opacity-50
+                                duration-300 ease-in-out transition-all delay-200
+                                transform translate-x-1/2 -translate-y-1/2 w-3/4'>
+                                <h4 className="font-bold text-lg text-center text-blue-900">{file.Name}</h4>
+                                <button onClick={() => {
+                                    select_folder(file.AbsolutePath);
+                                }} className="bg-pink-700 hover:bg-pink-900 rounded-full text-white font-bold py-2 px-4 w-full text-sm mb-2">
+                                    Abrir
+                                </button>
+
+                                <button onClick={() => {
+                                    copy_clipboard(file.AbsolutePath);
+                                }} className="bg-blue-500 hover:bg-blue-700 rounded-full text-white font-bold py-2 px-4 w-full text-sm">
+                                    Copiar
+                                </button>
+                            </div>
+                            <div className='border-sky-500 shadow-lime-50 grid grid-cols-1 align-middle items-center justify-items-center'>
+                                <div className=''>
+                                    <p><a href="#" className='cursor-pointer' onClick={() => {
+                                        console.log(file.AbsolutePath);
+                                    }}>{file.Name}</a>
+                                        <img src={file.AbsolutePath} alt="Preview"
+                                            className="opacity-100 group-hover:opacity-20
+                                            group-hover:w-2/4 m-auto group-hover:m-auto object-contain
+                                            object-center overflow-hidden w-64 h-64
+                                            duration-500 ease-in-out transition-all"
+                                            onError={
+                                                e => {
+                                                    e.currentTarget.remove();
+                                                }
+                                            } />
+
+                                    </p>
+                                </div>
+                                <div className='w-1/2 m-auto'>
+                                    <small className='text-gray-500 text-xs'>{file.Name}</small>
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>
             </div>
 
-        </div>
+        </div >
     )
 }
 
