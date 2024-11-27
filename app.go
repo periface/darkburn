@@ -119,10 +119,16 @@ func (a *App) CopyToClipboard(text string) {
 func (a *App) OpenInExplorer(text string) {
 	fmt.Println("Open folder: ", text)
 	folder_path := filepath.Join(MAIN_DIR, text)
+	absolute_path, err := filepath.Abs(folder_path)
+	if err == nil {
+        fmt.Println("Absolute path: ", absolute_path)
+    } else {
+        fmt.Println(err)
+	}
 	// remove after last slash
-	fmt.Println("Open folder: ", folder_path)
-	cmd := exec.Command("explorer", "/select", folder_path)
-	err := cmd.Run()
+	fmt.Println("Open folder: ", absolute_path)
+	cmd := exec.Command("explorer", "/select", absolute_path)
+	cmd.Run()
 	if err != nil {
 		fmt.Println(err)
 	}
