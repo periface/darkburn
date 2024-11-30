@@ -1,30 +1,17 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import { StartApp, CopyToClipboard, OpenInExplorer } from "../wailsjs/go/main/App";
+import { StartApp, CopyToClipboard, OpenInExplorer, GetFiles } from "../wailsjs/go/main/App";
 import { models } from '../wailsjs/go/models';
 import Menu from './components/Menu';
 import { ToastContainer, toast } from 'react-toastify';
 
 function App() {
-    const [result, setResult] = useState<models.Result>();
     const [files, setFiles] = useState<models.FileList[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [loadingApp, setLoadingApp] = useState<boolean>(true);
     const [unfiltered_files, setUnfilteredFiles] = useState<models.FileList[]>([]);
-    const updateFileNames = (result: models.Result) => setResult(result);
-    function start_app() {
-        setLoading(true);
-        StartApp().then(data => {
-            updateFileNames(data);
-            setFiles(data.Files);
-            setUnfilteredFiles(data.Files);
-        }).catch(err => {
-            console.log(err);
-        }).finally(() => {
-            setLoading(false);
-        });
-    }
+
     function select_folder(folder: string) {
-        console.log("Selecting folder");
         OpenInExplorer(folder).then(data => {
             console.log(data);
         });
@@ -80,8 +67,8 @@ function App() {
             setFiles(unfiltered_files);
             return;
         }
-        if (result?.Files?.length) {
-            let filtered_files = result?.Files.filter((file) => {
+        if (files.length) {
+            let filtered_files = files.filter((file) => {
                 return file.Extension.toUpperCase().includes(filetype.toUpperCase());
             });
             setFiles(filtered_files);
@@ -90,8 +77,8 @@ function App() {
 
     function search_files(search: string) {
         console.log("Searching files");
-        if (result?.Files?.length) {
-            let filtered_files = result?.Files.filter((file) => {
+        if (files?.length) {
+            let filtered_files = files.filter((file) => {
                 return file.Name.toUpperCase().includes(search.toUpperCase()) ||
                     file.Extension.toUpperCase().includes(search.toUpperCase())
                     || file.AbsolutePath.toUpperCase().includes(search.toUpperCase());
@@ -101,11 +88,31 @@ function App() {
     }
 
     useEffect(() => {
+
+        async function start_app() {
+            try {
+                setLoadingApp(true);
+                setLoading(true);
+                await StartApp();
+                const get_files = await GetFiles();
+                setFiles(get_files);
+                setUnfilteredFiles(get_files);
+            }
+            catch (err) {
+                console.log(err);
+            }
+            finally {
+                setLoadingApp(false);
+                setLoading(false);
+            }
+
+        }
         start_app();
+
     }, []);
 
     return (
-        <div id="App">
+        <div id="App" className='max-w-full'>
             <div className="w-full">
                 <Menu onsearch={search_files} onselect={set_file_type} />
             </div>
@@ -115,15 +122,16 @@ function App() {
                 </div>
             </div>
             }
-            {!loading && <div className="grid grid-cols-1">
+            {!loading && <div className="grid grid-cols-1 max-w-full">
                 <div className="grid grid-cols-3">
                     {files.map((file, index) => (
 
-                        <div key={index} className="p-2 relative group">
+                        <div key={index} className="p-2 relative group w-full">
                             <div className='z-50 opacity-0 group-hover:opacity-100 absolute top-1/2 right-1/2 bg-opacity-50
                                 duration-300 ease-in-out transition-all delay-200
                                 transform translate-x-1/2 -translate-y-1/2 w-3/4'>
-                                <h4 className="font-bold text-lg text-center text-blue-900">{file.Name}</h4>
+                                <h4 className="font-bold text-lg text-center text-blue-900 w-full max-w-full
+                                    break-words">{file.Name}</h4>
                                 <button onClick={() => {
                                     select_folder(file.AbsolutePath);
                                 }} className="bg-pink-700 hover:bg-pink-900 rounded-full text-white font-bold py-2 px-4 w-full text-sm mb-2">

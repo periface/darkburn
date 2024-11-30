@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"darkburn/internals/models"
+	"darkburn/internals/services"
 	"github.com/atotto/clipboard"
 )
 
@@ -53,11 +54,7 @@ func build_app_config() {
 var database *sql.DB
 
 func build_app_db() {
-	if database == nil {
-		database = db.Get_DB()
-	} else {
-		fmt.Println("Database already exists")
-	}
+	database = db.Init_DB(true)
 }
 
 // startup is called when the app starts. The context is saved
@@ -94,7 +91,18 @@ func search_in_folder(folder string, result *models.Result) {
 				Name:         file_info.Name(),
 				AbsolutePath: filepath.Join(folder, file_info.Name()),
 			}
-			result.Add_file_or_ignore(file)
+			stored := result.Add_file_or_ignore(file)
+
+			if stored {
+				fmt.Println("File:", file.Name)
+				fmt.Println("Stored:", stored)
+				id, err := services.Store_File(file)
+
+				if err != nil {
+					fmt.Println(err)
+				}
+				fmt.Println("Stored file with id:", id)
+			}
 		}
 	}
 }
@@ -122,7 +130,13 @@ func (a *App) OpenInExplorer(text string) {
 		fmt.Println(err)
 	}
 }
-
+func (a *App) GetFiles() []models.FileList {
+	files, err := services.Get_Files()
+	if err != nil {
+		fmt.Println(err)
+	}
+	return files
+}
 func (a *App) StartApp() models.Result {
 	result := models.Result{
 		Files: []models.FileList{},
@@ -134,7 +148,6 @@ func (a *App) StartApp() models.Result {
 	for _, file := range files {
 		if file.IsDir() {
 			folder_path := filepath.Join(appConfig.Path, file.Name())
-			println("Search in: ", folder_path)
 			search_in_folder(folder_path, &result)
 		} else {
 			file_info, err := file.Info()
@@ -146,8 +159,28 @@ func (a *App) StartApp() models.Result {
 				Extension:    extension,
 				Name:         file_info.Name(),
 				AbsolutePath: filepath.Join(MAIN_DIR, file_info.Name()),
+				CreatedAt:    file_info.ModTime(),
 			}
-			result.Add_file_or_ignore(file)
+			stored := result.Add_file_or_ignore(file)
+			fmt.Println("File:", file.Name)
+			fmt.Println("Stored:", stored)
+
+			if stored {
+				id, err := services.Store_File(file)
+
+				if err != nil {
+					fmt.Println(err)
+				}
+				fmt.Println("Stored file with id:", id)
+			}
+		}
+	}
+	// order by created_at
+	for i := 0; i < len(result.Files); i++ {
+		for j := i + 1; j < len(result.Files); j++ {
+			if result.Files[i].CreatedAt.Before(result.Files[j].CreatedAt) {
+				result.Files[i], result.Files[j] = result.Files[j], result.Files[i]
+			}
 		}
 	}
 	return result

@@ -24,12 +24,10 @@ func NewFileLoader() *FileLoader {
 func (h *FileLoader) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	var err error
 	requestedFilename := req.URL.Path
-	println("Requesting file:", requestedFilename)
 	// remove first slash
 	file_path := "." + requestedFilename
 	fileData, err := os.ReadFile(file_path)
 	if err != nil {
-        fmt.Println(err)
 		res.WriteHeader(http.StatusBadRequest)
 		res.Write([]byte(fmt.Sprintf("Could not load file %s", file_path)))
 	}
