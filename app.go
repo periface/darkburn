@@ -131,7 +131,10 @@ func (a *App) OpenInExplorer(text string) {
 	}
 }
 func (a *App) GetFiles() []models.FileList {
-	files, err := services.Get_Files()
+	input := models.DataTable{}
+	input.SetColumns([]string{"id", "extension", "name", "absolute_path", "created_at"})
+	input.SetFilterColumns([]string{"name"})
+	files, err := services.Get_Files(input)
 	if err != nil {
 		fmt.Println(err)
 	}

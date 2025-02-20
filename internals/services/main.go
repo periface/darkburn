@@ -24,7 +24,7 @@ func Store_File(file models.FileList) (int64, error) {
 }
 func Get_Files(input models.DataTable) ([]models.FileList, error) {
 	db := db.Get_DB(false)
-	query, err := input.GetTableQuery()
+	_, err := input.GetTableQuery()
 	get_items_query := `
     SELECT * FROM items
     `

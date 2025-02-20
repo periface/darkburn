@@ -122,6 +122,12 @@ function App() {
                 </div>
             </div>
             }
+            {!loading && files.length === 0 && <div className="w-full h-full flex justify-center items-center">
+                <div className="w-1/2 h-1/2">
+                    <h1 className="text-2xl text-center text-pink-900 font-bold">No hay archivos</h1>
+                </div>
+            </div>
+            }
             {!loading && <div className="grid grid-cols-1 max-w-full">
                 <div className="grid grid-cols-3">
                     {files.map((file, index) => (
