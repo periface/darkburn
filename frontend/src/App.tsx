@@ -98,7 +98,7 @@ function App() {
 
     return (
         <div id="App" className='max-w-full bg-black'>
-            <div className="w-full">
+            <div className="w-full fixed z-50">
                 <Menu onsearch={txt => {
                     setSearch(txt);
                 }} onselect={txt => {
@@ -120,7 +120,6 @@ function App() {
             {!loading && files?.length && <div className="grid grid-cols-1 max-w-full">
                 <div className="grid grid-cols-3">
                     {files.map((file, index) => (
-
                         <div key={index} className="p-2 relative group w-full bg-black">
                             <div className='z-50 opacity-0 group-hover:opacity-100 absolute top-1/2 right-1/2 bg-opacity-50
                                 duration-300 ease-in-out transition-all delay-200
@@ -141,7 +140,7 @@ function App() {
                                     </button>
                                 }
                             </div>
-                            <div className='border-sky-500 shadow-lime-50 grid grid-cols-1 align-middle items-center justify-items-center'>
+                            <div className='border-sky-500 shadow-lime-50 grid grid-cols-1 align-middle items-center justify-items-center w-full'>
                                 <div className=''>
                                     <p className="m-0"><a href="#" className='cursor-pointer' onClick={() => {
                                         console.log(file.AbsolutePath);
