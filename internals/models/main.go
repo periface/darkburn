@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -38,7 +39,6 @@ func (r *Result) Add_file_or_ignore(file FileList) bool {
 			r.Files = append(r.Files, file)
 			return true
 		}
-		return false
 	}
 	return false
 }

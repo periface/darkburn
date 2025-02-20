@@ -8,8 +8,6 @@ import (
 
 func Store_File(file models.FileList) (int64, error) {
 	db := db.Get_DB(false)
-	fmt.Println("Store File")
-
 	get_items_query := `
     INSERT INTO items (extension, name, absolute_path, created_at)
     VALUES (?, ?, ?, ?)
@@ -22,12 +20,14 @@ func Store_File(file models.FileList) (int64, error) {
 	return result.LastInsertId()
 
 }
-func Get_Files(input models.DataTable) ([]models.FileList, error) {
+func Get_Files(filter string) ([]models.FileList, error) {
 	db := db.Get_DB(false)
-	_, err := input.GetTableQuery()
 	get_items_query := `
     SELECT * FROM items
     `
+	if filter != "" {
+		get_items_query += " WHERE name LIKE '%" + filter + "%'"
+	}
 	rows, err := db.Query(get_items_query)
 	if err != nil {
 		fmt.Println(err)
@@ -44,9 +44,6 @@ func Get_Files(input models.DataTable) ([]models.FileList, error) {
 		}
 		files = append(files, file)
 	}
-	println("====================================")
-	fmt.Printf("Files: %v", files)
-	println("====================================")
 	return files, nil
 
 }

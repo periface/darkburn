@@ -6,8 +6,8 @@ export function CopyToClipboard(arg1) {
   return window['go']['main']['App']['CopyToClipboard'](arg1);
 }
 
-export function GetFiles() {
-  return window['go']['main']['App']['GetFiles']();
+export function GetFiles(arg1, arg2) {
+  return window['go']['main']['App']['GetFiles'](arg1, arg2);
 }
 
 export function OpenInExplorer(arg1) {

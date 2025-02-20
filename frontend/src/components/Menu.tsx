@@ -25,8 +25,8 @@ const Menu = (props: MenuProps) => {
                             props.onselect(e.target.value);
                         }}>
                             <option value="todos">Todo</option>
-                            <option value="svg">SVG</option>
-                            <option value="dxf">DXF</option>
+                            <option value=".svg">SVG</option>
+                            <option value=".dxf">DXF</option>
                         </select>
                     </div>
                 </div>

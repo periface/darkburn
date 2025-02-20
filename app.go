@@ -92,16 +92,16 @@ func search_in_folder(folder string, result *models.Result) {
 				AbsolutePath: filepath.Join(folder, file_info.Name()),
 			}
 			stored := result.Add_file_or_ignore(file)
-
+			if file.Extension == ".dxf" {
+				fmt.Println("dxf file")
+				fmt.Println(stored)
+			}
 			if stored {
-				fmt.Println("File:", file.Name)
-				fmt.Println("Stored:", stored)
-				id, err := services.Store_File(file)
+				_, err := services.Store_File(file)
 
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Println("Stored file with id:", id)
 			}
 		}
 	}
@@ -130,14 +130,22 @@ func (a *App) OpenInExplorer(text string) {
 		fmt.Println(err)
 	}
 }
-func (a *App) GetFiles() []models.FileList {
-	input := models.DataTable{}
-	input.SetColumns([]string{"id", "extension", "name", "absolute_path", "created_at"})
-	input.SetFilterColumns([]string{"name"})
-	files, err := services.Get_Files(input)
+func (a *App) GetFiles(searchString string, extension string) []models.FileList {
+	files, err := services.Get_Files(searchString)
 	if err != nil {
 		fmt.Println(err)
 	}
+	// filter by extension
+	if extension != "todos" {
+		var filtered_files []models.FileList
+		for _, file := range files {
+			if file.Extension == extension {
+				filtered_files = append(filtered_files, file)
+			}
+		}
+		return filtered_files
+	}
+
 	return files
 }
 func (a *App) StartApp() models.Result {
@@ -165,16 +173,13 @@ func (a *App) StartApp() models.Result {
 				CreatedAt:    file_info.ModTime(),
 			}
 			stored := result.Add_file_or_ignore(file)
-			fmt.Println("File:", file.Name)
-			fmt.Println("Stored:", stored)
-
 			if stored {
-				id, err := services.Store_File(file)
+
+				_, err := services.Store_File(file)
 
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Println("Stored file with id:", id)
 			}
 		}
 	}

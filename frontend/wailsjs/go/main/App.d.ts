@@ -4,7 +4,7 @@ import {models} from '../models';
 
 export function CopyToClipboard(arg1:string):Promise<void>;
 
-export function GetFiles():Promise<Array<models.FileList>>;
+export function GetFiles(arg1:string,arg2:string):Promise<Array<models.FileList>>;
 
 export function OpenInExplorer(arg1:string):Promise<void>;
 
